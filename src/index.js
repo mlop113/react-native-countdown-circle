@@ -6,6 +6,7 @@ import {
   Text,
   View,
   ViewPropTypes,
+  ImageBackground
 } from 'react-native'
 import PropTypes from 'prop-types'
 
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
   outerCircle: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e3e3e3',
+    backgroundColor: 'transparent',
   },
   innerCircle: {
     overflow: 'hidden',
@@ -69,8 +70,10 @@ function calcInterpolationValuesForHalfCircle2(
 
 function getInitialState(props) {
   const circleProgress = new Animated.Value(0)
+  const circleProgress1 = new Animated.Value(0)
   return {
     circleProgress,
+    circleProgress1,
     secondsElapsed: 0,
     text: props.updateText(0, props.seconds),
     interpolationValuesHalfCircle1: calcInterpolationValuesForHalfCircle1(
@@ -116,6 +119,7 @@ export default class PercentageCircle extends React.PureComponent {
     super(props)
 
     this.state = getInitialState(props)
+    this.startAnimation()
     this.restartAnimation()
   }
 
@@ -142,7 +146,6 @@ export default class PercentageCircle extends React.PureComponent {
     )
     this.setState(
       {
-        ...getInitialState(this.props),
         secondsElapsed,
         text: updatedText,
       },
@@ -150,12 +153,22 @@ export default class PercentageCircle extends React.PureComponent {
     )
   };
 
-  restartAnimation = () => {
+  onChat = ()=> {
+
+  }
+  startAnimation = () => {
     this.state.circleProgress.stopAnimation()
     Animated.timing(this.state.circleProgress, {
       toValue: 100,
-      duration: 1000,
+      duration: 1000 * this.props.seconds,
       easing: Easing.linear,
+    }).start(() =>{})
+  };
+
+  restartAnimation = () => {
+    Animated.timing(new Animated.Value(0), {
+      toValue: 100,
+      duration: 1000,
     }).start(this.onCircleAnimated)
   };
 
